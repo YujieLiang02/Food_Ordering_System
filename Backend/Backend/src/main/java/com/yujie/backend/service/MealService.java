@@ -9,10 +9,12 @@ import com.yujie.backend.exception.ResourceNotFoundException;
 import com.yujie.backend.repository.MealRepository;
 import com.yujie.backend.repository.MealTypeRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
+@Transactional(readOnly = true)
 public class MealService {
 
     private final MealRepository mealRepository;
@@ -44,6 +46,7 @@ public class MealService {
                 .toList();
     }
 
+    @Transactional
     public MealResponse createMeal(CreateMealRequest request) {
         MealType mealType = mealTypeRepository.findById(request.getMealTypeId())
                 .orElseThrow(() -> new ResourceNotFoundException("Meal type not found with id: " + request.getMealTypeId()));
@@ -59,6 +62,7 @@ public class MealService {
         return mapToMealResponse(savedMeal);
     }
 
+    @Transactional
     public MealResponse updateMeal(Long id, UpdateMealRequest request) {
         Meal meal = mealRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Meal not found with id: " + id));
@@ -76,6 +80,7 @@ public class MealService {
         return mapToMealResponse(updatedMeal);
     }
 
+    @Transactional
     public void deleteMeal(Long id) {
         Meal meal = mealRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Meal not found with id: " + id));

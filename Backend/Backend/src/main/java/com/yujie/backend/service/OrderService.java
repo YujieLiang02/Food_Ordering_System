@@ -13,11 +13,13 @@ import com.yujie.backend.repository.OrderRepository;
 import org.springframework.stereotype.Service;
 import com.yujie.backend.dto.UpdateOrderStatusRequest;
 import com.yujie.backend.entity.OrderStatus;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
+@Transactional(readOnly = true)
 public class OrderService {
 
     private final OrderRepository orderRepository;
@@ -42,6 +44,7 @@ public class OrderService {
         return mapToOrderResponse(order);
     }
 
+    @Transactional
     public OrderResponse createOrder(CreateOrderRequest request) {
         Order order = new Order();
         order.setCustomerName(request.getCustomerName());
@@ -70,6 +73,7 @@ public class OrderService {
         return mapToOrderResponse(savedOrder);
     }
 
+    @Transactional
     public OrderResponse updateOrderStatus(Long id, UpdateOrderStatusRequest request) {
         Order order = orderRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Order not found with id: " + id));
@@ -105,6 +109,7 @@ public class OrderService {
         }
     }
 
+    @Transactional
     public void deleteOrder(Long id) {
         Order order = orderRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Order not found with id: " + id));
