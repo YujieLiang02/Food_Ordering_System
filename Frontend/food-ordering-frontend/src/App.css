@@ -345,3 +345,50 @@ button:hover {
   text-align: center;
   margin-top: 20px;
 }
+
+.admin-login-card {
+  background-color: white;
+  max-width: 420px;
+  margin: 0 auto;
+  padding: 28px;
+  border-radius: 12px;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.admin-login-card h2 {
+  margin-top: 0;
+  margin-bottom: 12px;
+}
+
+.admin-login-tip {
+  color: #666;
+  margin-bottom: 20px;
+}
+
+.admin-login-card input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px;
+  margin-bottom: 14px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+}
+
+.admin-login-card button {
+  width: 100%;
+  padding: 10px;
+  background-color: #222;
+  color: white;
+  border-radius: 8px;
+}
+
+.admin-login-card button:disabled {
+  background-color: #999;
+  cursor: not-allowed;
+}
+
+.admin-login-error {
+  margin-top: 16px;
+  color: #cf1322;
+}
