@@ -22,6 +22,10 @@ public class AdminTokenInterceptor implements HandlerInterceptor {
             HttpServletResponse response,
             Object handler
     ) {
+        if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
+            return true;
+        }
+
         String token = extractToken(request);
 
         if (token == null || token.isBlank()) {
