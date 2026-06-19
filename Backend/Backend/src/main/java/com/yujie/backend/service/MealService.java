@@ -10,8 +10,15 @@ import com.yujie.backend.repository.MealRepository;
 import com.yujie.backend.repository.MealTypeRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @Transactional(readOnly = true)
@@ -81,11 +88,53 @@ public class MealService {
     }
 
     @Transactional
+    public MealResponse uploadMealImage(Long id, MultipartFile image) {
+        Meal meal = mealRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Meal not found with id: " + id));
+
+        if (image == null || image.isEmpty()) {
+            throw new IllegalArgumentException("Image file cannot be empty");
+        }
+
+        String contentType = image.getContentType();
+        if (contentType == null || !contentType.startsWith("image/")) {
+            throw new IllegalArgumentException("Only image files are allowed");
+        }
+
+        String originalFilename = image.getOriginalFilename();
+        String extension = getFileExtension(originalFilename);
+        String filename = UUID.randomUUID() + extension;
+
+        try {
+            Path uploadDir = Paths.get("uploads", "meals");
+            Files.createDirectories(uploadDir);
+
+            Path targetPath = uploadDir.resolve(filename);
+            Files.copy(image.getInputStream(), targetPath, StandardCopyOption.REPLACE_EXISTING);
+        } catch (IOException exception) {
+            throw new RuntimeException("Failed to upload meal image", exception);
+        }
+
+        meal.setImageUrl("/uploads/meals/" + filename);
+        Meal updatedMeal = mealRepository.save(meal);
+
+        return mapToMealResponse(updatedMeal);
+    }
+
+    @Transactional
     public void deleteMeal(Long id) {
         Meal meal = mealRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Meal not found with id: " + id));
 
         mealRepository.delete(meal);
+    }
+
+    private String getFileExtension(String filename) {
+        if (filename == null || filename.isBlank() || !filename.contains(".")) {
+            return "";
+        }
+
+        return filename.substring(filename.lastIndexOf("."));
     }
 
     private MealResponse mapToMealResponse(Meal meal) {
@@ -103,7 +152,8 @@ public class MealService {
                 meal.getDescription(),
                 meal.getPrice(),
                 mealTypeId,
-                mealTypeName
+                mealTypeName,
+                meal.getImageUrl()
         );
     }
 }

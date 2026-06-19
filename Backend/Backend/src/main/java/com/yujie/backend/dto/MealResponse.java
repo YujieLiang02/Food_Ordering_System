@@ -8,17 +8,27 @@ public class MealResponse {
     private Double price;
     private Long mealTypeId;
     private String mealTypeName;
+    private String imageUrl;
 
     public MealResponse() {
     }
 
-    public MealResponse(Long id, String name, String description, Double price, Long mealTypeId, String mealTypeName) {
+    public MealResponse(
+            Long id,
+            String name,
+            String description,
+            Double price,
+            Long mealTypeId,
+            String mealTypeName,
+            String imageUrl
+    ) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.price = price;
         this.mealTypeId = mealTypeId;
         this.mealTypeName = mealTypeName;
+        this.imageUrl = imageUrl;
     }
 
     public Long getId() {
@@ -45,6 +55,10 @@ public class MealResponse {
         return mealTypeName;
     }
 
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
     public void setId(Long id) {
         this.id = id;
     }
@@ -67,5 +81,9 @@ public class MealResponse {
 
     public void setMealTypeName(String mealTypeName) {
         this.mealTypeName = mealTypeName;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 }

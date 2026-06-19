@@ -16,6 +16,18 @@ export interface Meal {
   imageUrl?: string;
 }
 
+export interface MealPayload {
+  name: string;
+  description: string;
+  price: number;
+  mealTypeId: number;
+}
+
+export interface MealTypePayload {
+  name: string;
+  description: string;
+}
+
 export interface CartItem {
   mealId: number;
   name: string;

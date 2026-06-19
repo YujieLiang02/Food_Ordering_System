@@ -5,8 +5,10 @@ import com.yujie.backend.dto.MealResponse;
 import com.yujie.backend.dto.UpdateMealRequest;
 import com.yujie.backend.service.MealService;
 import jakarta.validation.Valid;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -40,6 +42,14 @@ public class AdminMealController {
             @Valid @RequestBody CreateMealRequest request
     ) {
         return ResponseEntity.ok(mealService.createMeal(request));
+    }
+
+    @PostMapping(value = "/{id}/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<MealResponse> uploadMealImage(
+            @PathVariable Long id,
+            @RequestParam("image") MultipartFile image
+    ) {
+        return ResponseEntity.ok(mealService.uploadMealImage(id, image));
     }
 
     @PutMapping("/{id}")

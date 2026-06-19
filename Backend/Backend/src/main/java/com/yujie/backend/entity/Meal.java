@@ -1,4 +1,5 @@
 package com.yujie.backend.entity;
+
 import jakarta.persistence.*;
 
 @Entity
@@ -12,6 +13,7 @@ public class Meal {
     private String description;
     private double price;
     private boolean available = true;
+    private String imageUrl;
 
     @ManyToOne
     @JoinColumn(name = "meal_type_id")
@@ -62,6 +64,14 @@ public class Meal {
 
     public void setAvailable(boolean available) {
         this.available = available;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 
     public MealType getMealType() {

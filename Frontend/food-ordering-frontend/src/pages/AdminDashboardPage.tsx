@@ -123,9 +123,18 @@ function AdminDashboardPage() {
           <p>Manage customer orders and update order status.</p>
         </div>
 
-        <button className="logout-btn" onClick={handleLogout}>
-          Logout
-        </button>
+        <div className="admin-header-actions">
+          <button
+            className="manage-menu-btn"
+            onClick={() => navigate("/admin/menu")}
+          >
+            Manage Menu
+          </button>
+
+          <button className="logout-btn" onClick={handleLogout}>
+            Logout
+          </button>
+        </div>
       </div>
 
       <div className="admin-filter-card">

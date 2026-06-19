@@ -1,5 +1,14 @@
 import { request } from "./request";
-import type { Order, OrderStatus } from "../types";
+import type {
+  Meal,
+  MealPayload,
+  MealType,
+  MealTypePayload,
+  Order,
+  OrderStatus,
+} from "../types";
+
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 export function checkAdminEntryCode(entryCode: string) {
   return request<{
@@ -57,4 +66,64 @@ export function adminLogout(token: string) {
       Authorization: `Bearer ${token}`,
     },
   });
+}
+
+export function getAdminMeals(token: string) {
+  return request<Meal[]>("/api/admin/meals", {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+}
+
+export function createAdminMeal(data: MealPayload, token: string) {
+  return request<Meal>("/api/admin/meals", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(data),
+  });
+}
+
+export function getAdminMealTypes(token: string) {
+  return request<MealType[]>("/api/admin/meal-types", {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+}
+
+export function createAdminMealType(data: MealTypePayload, token: string) {
+  return request<MealType>("/api/admin/meal-types", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(data),
+  });
+}
+
+export async function uploadMealImage(
+  mealId: number,
+  image: File,
+  token: string
+) {
+  const formData = new FormData();
+  formData.append("image", image);
+
+  const response = await fetch(`${API_BASE_URL}/api/admin/meals/${mealId}/image`, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+    body: formData,
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(errorText || `Upload failed with status: ${response.status}`);
+  }
+
+  return response.json() as Promise<Meal>;
 }
