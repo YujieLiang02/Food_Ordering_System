@@ -68,6 +68,8 @@ export function adminLogout(token: string) {
   });
 }
 
+/* Meal management */
+
 export function getAdminMeals(token: string) {
   return request<Meal[]>("/api/admin/meals", {
     headers: {
@@ -86,21 +88,26 @@ export function createAdminMeal(data: MealPayload, token: string) {
   });
 }
 
-export function getAdminMealTypes(token: string) {
-  return request<MealType[]>("/api/admin/meal-types", {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
-}
-
-export function createAdminMealType(data: MealTypePayload, token: string) {
-  return request<MealType>("/api/admin/meal-types", {
-    method: "POST",
+export function updateAdminMeal(
+  mealId: number,
+  data: MealPayload,
+  token: string
+) {
+  return request<Meal>(`/api/admin/meals/${mealId}`, {
+    method: "PUT",
     headers: {
       Authorization: `Bearer ${token}`,
     },
     body: JSON.stringify(data),
+  });
+}
+
+export function deleteAdminMeal(mealId: number, token: string) {
+  return request<void>(`/api/admin/meals/${mealId}`, {
+    method: "DELETE",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
   });
 }
 
@@ -126,4 +133,47 @@ export async function uploadMealImage(
   }
 
   return response.json() as Promise<Meal>;
+}
+
+/* Meal type management */
+
+export function getAdminMealTypes(token: string) {
+  return request<MealType[]>("/api/admin/meal-types", {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+}
+
+export function createAdminMealType(data: MealTypePayload, token: string) {
+  return request<MealType>("/api/admin/meal-types", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(data),
+  });
+}
+
+export function updateAdminMealType(
+  mealTypeId: number,
+  data: MealTypePayload,
+  token: string
+) {
+  return request<MealType>(`/api/admin/meal-types/${mealTypeId}`, {
+    method: "PUT",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(data),
+  });
+}
+
+export function deleteAdminMealType(mealTypeId: number, token: string) {
+  return request<void>(`/api/admin/meal-types/${mealTypeId}`, {
+    method: "DELETE",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
 }
