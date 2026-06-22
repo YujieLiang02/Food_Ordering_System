@@ -427,125 +427,20 @@ function AdminMenuPage() {
 
   return (
     <div className="page">
-      <div className="admin-menu-header">
-        <div>
-          <h1>Admin Menu Management</h1>
-          <p>Add, edit, and delete meals and meal types.</p>
-        </div>
-
-        <button onClick={() => navigate("/admin/dashboard")}>
-          Back to Dashboard
-        </button>
+    <div className="admin-menu-header">
+      <div className="admin-menu-title">
+        <h1>Admin Menu Management</h1>
+        <p>Add, edit, and delete meals and meal types.</p>
       </div>
+
+      <button onClick={() => navigate("/admin/dashboard")}>
+        Back to Dashboard
+      </button>
+    </div>
 
       {loading && <p>Loading...</p>}
       {message && <p className="success-message">{message}</p>}
       {error && <p className="error-message">{error}</p>}
-
-      <div className="admin-menu-layout">
-        <section className="admin-menu-section">
-          <h2>Add Meal Type</h2>
-
-          <div className="admin-form">
-            <label>
-              Meal Type Name
-              <input
-                value={mealTypeName}
-                onChange={(event) => setMealTypeName(event.target.value)}
-                placeholder="Example: Main Dish"
-              />
-            </label>
-
-            <label>
-              Description
-              <textarea
-                value={mealTypeDescription}
-                onChange={(event) => setMealTypeDescription(event.target.value)}
-                placeholder="Example: Hot meals and main dishes"
-              />
-            </label>
-
-            <button onClick={handleAddMealType} disabled={loading}>
-              Add Meal Type
-            </button>
-          </div>
-        </section>
-
-        <section className="admin-menu-section">
-          <h2>Add Meal</h2>
-
-          <div className="admin-form">
-            <label>
-              Meal Name
-              <input
-                value={mealName}
-                onChange={(event) => setMealName(event.target.value)}
-                placeholder="Example: Beef Burger"
-              />
-            </label>
-
-            <label>
-              Description
-              <textarea
-                value={mealDescription}
-                onChange={(event) => setMealDescription(event.target.value)}
-                placeholder="Example: Beef burger with cheese"
-              />
-            </label>
-
-            <label>
-              Price
-              <input
-                value={mealPrice}
-                onChange={(event) => setMealPrice(event.target.value)}
-                placeholder="Example: 12.99"
-                type="number"
-                min="0"
-                step="0.01"
-              />
-            </label>
-
-            <label>
-              Meal Type
-              <select
-                value={mealTypeId}
-                onChange={(event) => setMealTypeId(event.target.value)}
-              >
-                <option value="">Select meal type</option>
-                {mealTypes.map((mealType) => (
-                  <option key={mealType.id} value={mealType.id}>
-                    {mealType.name}
-                  </option>
-                ))}
-              </select>
-            </label>
-
-            <label>
-              Meal Image
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handleAddImageChange}
-              />
-            </label>
-
-            {imagePreviewUrl && (
-              <div className="image-preview-box">
-                <p>Image Preview</p>
-                <img
-                  src={imagePreviewUrl}
-                  alt="Meal preview"
-                  className="admin-image-preview"
-                />
-              </div>
-            )}
-
-            <button onClick={handleAddMeal} disabled={loading}>
-              Add Meal
-            </button>
-          </div>
-        </section>
-      </div>
 
       <section className="admin-menu-section">
         <h2>Current Meal Types</h2>
@@ -766,6 +661,110 @@ function AdminMenuPage() {
           </div>
         )}
       </section>
+      <div className="admin-menu-layout">
+        <section className="admin-menu-section">
+          <h2>Add Meal Type</h2>
+
+          <div className="admin-form">
+            <label>
+              Meal Type Name
+              <input
+                value={mealTypeName}
+                onChange={(event) => setMealTypeName(event.target.value)}
+                placeholder="Example: Main Dish"
+              />
+            </label>
+
+            <label>
+              Description
+              <textarea
+                value={mealTypeDescription}
+                onChange={(event) => setMealTypeDescription(event.target.value)}
+                placeholder="Example: Hot meals and main dishes"
+              />
+            </label>
+
+            <button onClick={handleAddMealType} disabled={loading}>
+              Add Meal Type
+            </button>
+          </div>
+        </section>
+
+        <section className="admin-menu-section">
+          <h2>Add Meal</h2>
+
+          <div className="admin-form">
+            <label>
+              Meal Name
+              <input
+                value={mealName}
+                onChange={(event) => setMealName(event.target.value)}
+                placeholder="Example: Beef Burger"
+              />
+            </label>
+
+            <label>
+              Description
+              <textarea
+                value={mealDescription}
+                onChange={(event) => setMealDescription(event.target.value)}
+                placeholder="Example: Beef burger with cheese"
+              />
+            </label>
+
+            <label>
+              Price
+              <input
+                value={mealPrice}
+                onChange={(event) => setMealPrice(event.target.value)}
+                placeholder="Example: 12.99"
+                type="number"
+                min="0"
+                step="0.01"
+              />
+            </label>
+
+            <label>
+              Meal Type
+              <select
+                value={mealTypeId}
+                onChange={(event) => setMealTypeId(event.target.value)}
+              >
+                <option value="">Select meal type</option>
+                {mealTypes.map((mealType) => (
+                  <option key={mealType.id} value={mealType.id}>
+                    {mealType.name}
+                  </option>
+                ))}
+              </select>
+            </label>
+
+            <label>
+              Meal Image
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleAddImageChange}
+              />
+            </label>
+
+            {imagePreviewUrl && (
+              <div className="image-preview-box">
+                <p>Image Preview</p>
+                <img
+                  src={imagePreviewUrl}
+                  alt="Meal preview"
+                  className="admin-image-preview"
+                />
+              </div>
+            )}
+
+            <button onClick={handleAddMeal} disabled={loading}>
+              Add Meal
+            </button>
+          </div>
+        </section>
+      </div>
     </div>
   );
 }
