@@ -1,21 +1,11 @@
-# macOS
 .DS_Store
-
-# R history
 .Rhistory
 
-# Node / Frontend
 node_modules/
 dist/
-dist-ssr/
-*.local
-.env
-
-# Java / Spring Boot
 target/
 
-# Uploaded images
-Backend/Backend/uploads/
+.env
+*.local
 
-# Local config files
-application-local.properties
+Backend/Backend/uploads/
