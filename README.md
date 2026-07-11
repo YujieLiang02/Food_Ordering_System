@@ -1,563 +1,428 @@
-# Food Ordering System
+<div align="center">
 
-A full-stack food ordering web application built with **React + TypeScript + Vite** on the frontend and **Spring Boot + MySQL** on the backend.
+# 🍽️ Food Ordering System
 
-This project supports customer meal browsing, cart management, order submission, order status query, admin login, admin order management, admin menu management, meal type management, and meal image upload.
+**A full-stack restaurant ordering application covering customer ordering, order tracking, admin order processing, and menu management.**
 
----
+<p>
+  <img src="https://img.shields.io/badge/React-19.2-61DAFB?style=flat-square&logo=react&logoColor=white" alt="React 19.2">
+  <img src="https://img.shields.io/badge/TypeScript-6.0-3178C6?style=flat-square&logo=typescript&logoColor=white" alt="TypeScript 6.0">
+  <img src="https://img.shields.io/badge/Vite-8.0-646CFF?style=flat-square&logo=vite&logoColor=white" alt="Vite 8.0">
+  <img src="https://img.shields.io/badge/Spring_Boot-4.0.6-6DB33F?style=flat-square&logo=springboot&logoColor=white" alt="Spring Boot 4.0.6">
+  <img src="https://img.shields.io/badge/Java-17-ED8B00?style=flat-square&logo=openjdk&logoColor=white" alt="Java 17">
+  <img src="https://img.shields.io/badge/MySQL-4479A1?style=flat-square&logo=mysql&logoColor=white" alt="MySQL">
+</p>
 
-## 1. Project Overview
+[Preview](#-project-preview) · [Features](#-features) · [Quick Start](#-quick-start) · [API](#-api-overview) · [Troubleshooting](#-troubleshooting)
 
-This project is designed for a simple restaurant food ordering workflow.
-
-There are two main user roles:
-
-### Customer
-
-Customers can:
-
-- Browse meal categories
-- Browse meals with name, description, price, category, and image
-- Filter meals by meal type
-- Add meals to cart
-- Increase or reduce item quantity
-- Remove items from cart
-- Submit an order
-- Receive an order ID after submission
-- Query order details and order status by order ID
-
-### Admin
-
-Admins can:
-
-- Verify admin entry code
-- Log in with admin credentials
-- View all customer orders
-- Filter orders by status
-- Update order status using valid status transitions
-- Manage meal types
-- Add, edit, and delete meal types
-- Add, edit, and delete meals
-- Upload and change meal images
-- Preview selected images before submission
-- Log out
+</div>
 
 ---
 
-## 2. Tech Stack
+## 📖 Overview
 
-### Frontend
+Food Ordering System is a full-stack, decoupled web application with complete customer and administrator workflows:
 
-- Vite
-- React
-- TypeScript
-- React Router
-- Plain CSS
-- Fetch API
+- Customers can browse and filter meals, manage a cart, submit orders, and track order status by ID.
+- Administrators use a two-step entry-code and account login flow to manage orders, categories, meals, and meal images.
+- The backend validates prices, calculates totals, controls order-state transitions, authenticates administrators, and stores uploaded images.
 
-### Backend
+The project is suitable as a React and Spring Boot learning project, a course assignment, or a REST API layered-architecture example.
 
-- Java 17
-- Spring Boot
-- Spring Web / WebMVC
-- Spring Data JPA
-- Spring Validation
-- MySQL
-- Lombok
-- REST API
-- Multipart image upload
+## 📸 Project Preview
 
-### Database
+<p align="center">
+  <img src="./docs/screenshots/customer-ordering.png" alt="Food Ordering System customer ordering page" width="100%">
+</p>
 
-- MySQL
+<p align="center"><sub>Customer ordering page captured from the application running locally with the frontend, backend, and MySQL connected.</sub></p>
 
-Main database tables include:
+| Area | Runtime behavior |
+| --- | --- |
+| **Category filter** | The dropdown switches between all meals and a selected category, requesting the corresponding menu data from the backend. |
+| **Meal cards** | Each card displays a name, description, category, price, and optional image. `Add to Cart` adds the meal to the current cart. |
+| **Shopping cart** | Customers can increase quantities, decrease quantities, remove items, and see the total update immediately. |
+| **Order submission** | After the customer enters a name and confirms, the backend creates the order using the latest prices stored in the database. |
 
-- `meal_types`
-- `meal`
-- `orders`
-- `order_item`
+> The meals, image, and prices shown above came from the connected MySQL database rather than static placeholder content.
 
----
+## ✨ Features
 
-## 3. Main Features
+| Role | Module | Implemented capabilities |
+| --- | --- | --- |
+| Customer | Menu | View meal images, names, descriptions, categories, and prices; filter meals by category |
+| Customer | Cart | Add meals, change quantities, remove items, and calculate the total automatically |
+| Customer | Orders | Submit an order, receive an order ID, and query order status and line items |
+| Administrator | Authentication | Entry-code verification, account login, Bearer token authentication, and logout |
+| Administrator | Order management | View all orders, filter by status, and apply valid status transitions |
+| Administrator | Menu management | Create, update, and delete meal types and meals; preview and upload images |
 
-### Customer Features
+### Implementation Highlights
 
-- Display all meal types
-- Display all meals
-- Filter meals by meal type
-- Display meal images
-- Add meals to cart
-- Increase and decrease quantity
-- Remove cart items
-- Calculate total price
-- Submit order
-- Show order ID after submission
-- Query order status by order ID
+- **Server-side pricing:** order requests contain only meal IDs and quantities. The backend reloads each meal and calculates the total from database prices.
+- **Historical price snapshots:** every `OrderItem` stores its `itemPrice`, so later menu-price changes do not alter previous orders.
+- **Controlled status transitions:** the backend validates every transition; completed and cancelled orders cannot be changed again.
+- **Layered architecture:** Controller, Service, Repository, DTO, and Entity responsibilities are separated.
+- **Centralized error handling:** unauthorized access, missing resources, invalid input, and other errors use shared exception handling.
+- **Separated image storage:** image files are stored on disk while the database stores only their public paths.
 
-### Admin Features
+## 🏗️ Architecture
 
-- Admin entry code check
-- Admin login
-- Admin token stored in `localStorage`
-- Protected admin pages
-- View all orders
-- Filter orders by status
-- Update order status
-- Manage meal types
-- Manage meals
-- Upload meal images
-- Preview selected images before saving
-- Logout
-
----
-
-## 4. Project Structure
-
-```text
-Food_Ordering_System/
-├── Backend/
-│   └── Backend/
-│       ├── src/
-│       │   └── main/
-│       │       ├── java/
-│       │       │   └── com/yujie/backend/
-│       │       │       ├── config/
-│       │       │       ├── controller/
-│       │       │       ├── dto/
-│       │       │       ├── entity/
-│       │       │       ├── exception/
-│       │       │       ├── repository/
-│       │       │       └── service/
-│       │       └── resources/
-│       │           └── application.properties
-│       ├── uploads/
-│       ├── pom.xml
-│       └── mvnw
-│
-├── Frontend/
-│   └── food-ordering-frontend/
-│       ├── src/
-│       │   ├── api/
-│       │   │   ├── request.ts
-│       │   │   ├── publicApi.ts
-│       │   │   └── adminApi.ts
-│       │   ├── pages/
-│       │   │   ├── HomePage.tsx
-│       │   │   ├── OrderQueryPage.tsx
-│       │   │   ├── AdminLoginPage.tsx
-│       │   │   ├── AdminDashboardPage.tsx
-│       │   │   └── AdminMenuPage.tsx
-│       │   ├── types/
-│       │   │   └── index.ts
-│       │   ├── App.tsx
-│       │   ├── main.tsx
-│       │   └── App.css
-│       ├── .env.example
-│       ├── package.json
-│       └── vite.config.ts
-│
-└── README.md
+```mermaid
+flowchart LR
+    U["Customer / Admin Browser"] --> FE["React + TypeScript + Vite"]
+    FE -->|Public REST API| PC["Public Controllers"]
+    FE -->|Bearer Token| I["AdminTokenInterceptor"]
+    I --> AC["Admin Controllers"]
+    PC --> S["Service Layer"]
+    AC --> S
+    S --> R["Spring Data JPA Repositories"]
+    R --> DB[("MySQL")]
+    S --> FS[("uploads/meals")]
+    FS -->|/uploads/** static resources| FE
 ```
 
----
-
-## 5. Routes
-
-| Route | Page | Description |
-|---|---|---|
-| `/` | HomePage | Customer meal browsing, cart, and order submission |
-| `/orders/query` | OrderQueryPage | Customer order query by order ID |
-| `/admin` | AdminLoginPage | Admin entry code check and admin login |
-| `/admin/dashboard` | AdminDashboardPage | Admin order management |
-| `/admin/menu` | AdminMenuPage | Admin meal and meal type management |
-
----
-
-## 6. Order Status Rules
-
-The frontend only shows valid action buttons based on the current order status.
-
-| Current Status | Allowed Next Status | Available Buttons |
-|---|---|---|
-| `PENDING` | `PREPARING`, `CANCELLED` | Set PREPARING, Set CANCELLED |
-| `PREPARING` | `COMPLETED`, `CANCELLED` | Set COMPLETED, Set CANCELLED |
-| `COMPLETED` | None | No action buttons |
-| `CANCELLED` | None | No action buttons |
-
----
-
-## 7. Environment Setup
-
-### Frontend Environment
-
-Create a `.env` file inside:
+### Administrator Authentication Flow
 
 ```text
-Frontend/food-ordering-frontend/
+Entry-code check → Account login → Backend generates a UUID token
+                 → Frontend stores it in localStorage
+                 → Authorization: Bearer <token>
+                 → Interceptor protects /api/admin/**
 ```
 
-You can copy the example file:
+Administrator tokens are stored in backend memory and are not JWTs. The default lifetime is `120` minutes. Restarting the backend invalidates all existing tokens, so administrators must sign in again.
+
+### Meal Image Flow
+
+```text
+Local browser preview → multipart/form-data upload → Backend image validation
+                      → Save under uploads/meals
+                      → Store /uploads/meals/... path in MySQL
+```
+
+The default maximum file size and request size are both `5 MB`. Start the backend from `Backend/Backend` so the relative upload directory remains consistent.
+
+## 🧰 Technology Stack
+
+| Layer | Technologies |
+| --- | --- |
+| Frontend | React 19.2, TypeScript 6, React Router 7, Vite 8, Fetch API, plain CSS |
+| Backend | Java 17, Spring Boot 4.0.6, Spring WebMVC, Spring Validation, Spring Data JPA |
+| Database | MySQL |
+| Tooling | npm, Maven Wrapper, Lombok |
+| File storage | Local backend directory at `uploads/meals/` |
+
+## 🚀 Quick Start
+
+### 1. Prerequisites
+
+| Tool | Requirement |
+| --- | --- |
+| Java | 17 or later |
+| Node.js | `^20.19.0` or `>=22.12.0` |
+| npm | Installed with Node.js |
+| MySQL | A locally accessible MySQL Server |
+| Maven | No separate installation required; Maven Wrapper is included |
+
+Check the installed versions:
 
 ```bash
-cp .env.example .env
+java -version
+node -v
+npm -v
+mysql --version
 ```
 
-The `.env` file should contain:
-
-```env
-VITE_API_BASE_URL=http://localhost:8080
-```
-
-The frontend uses this value when calling backend APIs.
-
-### Backend Environment
-
-The backend supports environment variables for database and admin configuration.
-
-Example values:
-
-```bash
-export DB_URL="jdbc:mysql://localhost:3306/Food_Ordering_System?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true"
-export DB_USERNAME="root"
-export DB_PASSWORD="your_mysql_password"
-
-export ADMIN_ENTRY_CODE="your_admin_entry_code"
-export ADMIN_USERNAME="admin"
-export ADMIN_PASSWORD="your_admin_password"
-export ADMIN_TOKEN_EXPIRE_MINUTES="120"
-```
-
-If environment variables are not provided, the backend will use the default values defined in `application.properties`.
-
-For safety, it is recommended to set your own admin entry code and admin password before running the project.
-
----
-
-## 8. Database Setup
-
-This project uses MySQL.
-
-Create the database before running the backend:
-
-```sql
-CREATE DATABASE IF NOT EXISTS Food_Ordering_System;
-```
-
-Then make sure your backend database configuration points to this database.
-
-Example database URL:
-
-```text
-jdbc:mysql://localhost:3306/Food_Ordering_System?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
-```
-
----
-
-## 9. How to Run the Project
-
-### Step 1: Clone the Repository
+### 2. Clone the Repository
 
 ```bash
 git clone https://github.com/YujieLiang02/Food_Ordering_System.git
 cd Food_Ordering_System
 ```
 
-### Step 2: Start MySQL
+### 3. Create the Database
 
-Make sure MySQL is running.
-
-On Mac, you can test the MySQL connection with:
+Sign in to MySQL:
 
 ```bash
 mysql -u root -p
 ```
 
-Then enter your MySQL password.
+Create the database:
 
-### Step 3: Start the Backend
+```sql
+CREATE DATABASE IF NOT EXISTS Food_Ordering_System
+  CHARACTER SET utf8mb4
+  COLLATE utf8mb4_unicode_ci;
+```
 
-Go to the backend folder:
+The project uses `spring.jpa.hibernate.ddl-auto=update`, so the backend creates or updates the tables when it starts. It does not create the database itself.
+
+> The repository does not include seed data. An empty menu is expected on the first run; sign in to the admin area and create meal types and meals first.
+
+### 4. Configure the Backend
+
+Setting environment variables in the same terminal that starts the backend is recommended, because it keeps real credentials out of the repository:
+
+```bash
+export DB_URL='jdbc:mysql://localhost:3306/Food_Ordering_System?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true'
+export DB_USERNAME='root'
+export DB_PASSWORD='your_mysql_password'
+
+export ADMIN_ENTRY_CODE='your_admin_entry_code'
+export ADMIN_USERNAME='admin'
+export ADMIN_PASSWORD='your_admin_password'
+export ADMIN_TOKEN_EXPIRE_MINUTES='120'
+```
+
+PowerShell example:
+
+```powershell
+$env:DB_USERNAME = "root"
+$env:DB_PASSWORD = "your_mysql_password"
+$env:ADMIN_USERNAME = "admin"
+$env:ADMIN_PASSWORD = "your_admin_password"
+```
+
+Alternatively, use `Backend/Backend/src/main/resources/application-example.properties` as a reference and fill in the values manually. Spring Boot does not automatically load a regular `.env` file.
+
+### 5. Start the Backend
+
+macOS / Linux:
 
 ```bash
 cd Backend/Backend
-```
-
-If needed, give permission to the Maven wrapper:
-
-```bash
 chmod +x mvnw
-```
-
-Run the Spring Boot backend:
-
-```bash
 ./mvnw spring-boot:run
 ```
 
-The backend should run at:
+Windows:
 
-```text
-http://localhost:8080
+```bat
+cd Backend\Backend
+mvnw.cmd spring-boot:run
 ```
 
-### Step 4: Start the Frontend
+The backend runs at `http://localhost:8080` by default. Check the public API with:
 
-Open a new terminal window.
+```bash
+curl http://localhost:8080/api/meal-types
+```
 
-Go to the frontend folder:
+A successful request returns a JSON array. Before any categories have been created, the usual response is `[]`.
+
+### 6. Start the Frontend
+
+Open another terminal:
 
 ```bash
 cd Frontend/food-ordering-frontend
-```
-
-Install dependencies:
-
-```bash
-npm install
-```
-
-Create the frontend environment file:
-
-```bash
+npm ci
 cp .env.example .env
-```
-
-Start the frontend:
-
-```bash
 npm run dev
 ```
 
-The frontend should run at:
-
-```text
-http://localhost:5173
-```
-
----
-
-## 10. Build Commands
-
-### Frontend Build
-
-```bash
-cd Frontend/food-ordering-frontend
-npm run build
-```
-
-### Frontend Lint
-
-```bash
-cd Frontend/food-ordering-frontend
-npm run lint
-```
-
-### Backend Test
-
-```bash
-cd Backend/Backend
-./mvnw test
-```
-
----
-
-## 11. API Summary
-
-### Public APIs
-
-| Feature | Method | Path |
-|---|---|---|
-| Get meal types | GET | `/api/meal-types` |
-| Get all meals | GET | `/api/meals` |
-| Get meals by type | GET | `/api/meals/type/{mealTypeId}` |
-| Create order | POST | `/api/orders` |
-| Get order by ID | GET | `/api/orders/{id}` |
-
-### Admin APIs
-
-| Feature | Method | Path |
-|---|---|---|
-| Check admin entry code | POST | `/api/admin/entry/check` |
-| Admin login | POST | `/api/admin/login` |
-| Admin logout | POST | `/api/admin/logout` |
-| Get all admin orders | GET | `/api/admin/orders` |
-| Get orders by status | GET | `/api/admin/orders/status/{status}` |
-| Update order status | PATCH | `/api/admin/orders/{id}/status` |
-| Get admin meals | GET | `/api/admin/meals` |
-| Create meal | POST | `/api/admin/meals` |
-| Update meal | PUT | `/api/admin/meals/{id}` |
-| Delete meal | DELETE | `/api/admin/meals/{id}` |
-| Upload meal image | POST | `/api/admin/meals/{id}/image` |
-| Get admin meal types | GET | `/api/admin/meal-types` |
-| Create meal type | POST | `/api/admin/meal-types` |
-| Update meal type | PUT | `/api/admin/meal-types/{id}` |
-| Delete meal type | DELETE | `/api/admin/meal-types/{id}` |
-
----
-
-## 12. Image Upload Explanation
-
-Meal images are not stored directly in the database.
-
-The image upload process is:
-
-1. Admin selects an image in the frontend.
-2. The frontend shows a local image preview.
-3. The frontend uploads the image using `FormData`.
-4. The backend receives the file through `multipart/form-data`.
-5. The backend saves the real image file under the backend upload folder.
-6. The backend saves only the image URL or image path in the database.
-7. The frontend displays the image by combining the backend base URL and the saved image path.
-
-Example final image URL:
-
-```text
-http://localhost:8080/uploads/meals/example-image.jpg
-```
-
-If the backend is stopped, the browser cannot load the image. However, the uploaded file is still saved on disk. After restarting the backend, the image should display again as long as the upload folder still exists.
-
----
-
-## 13. Manual Testing Result
-
-Full manual testing has been completed.
-
-Passed test areas:
-
-- Customer meal browsing
-- Meal type filtering
-- Cart add, reduce, and delete
-- Order submission
-- Order ID display after submission
-- Order query by ID
-- Admin entry code check
-- Admin login
-- Admin protected routes
-- Admin order list
-- Admin order status filtering
-- Valid order status transition buttons
-- Order status update
-- Admin menu management
-- Add, edit, and delete meal types
-- Add, edit, and delete meals
-- Meal image upload
-- Meal image preview
-- Uploaded image display on customer page
-- Image persistence after backend restart
-- Admin logout
-
-Current project status:
-
-```text
-Core features completed and full manual testing passed.
-```
-
----
-
-## 14. Troubleshooting
-
-### Frontend Cannot Call Backend
-
-Check that the backend is running at:
-
-```text
-http://localhost:8080
-```
-
-Also check that the frontend `.env` file contains:
+The frontend environment file should contain:
 
 ```env
 VITE_API_BASE_URL=http://localhost:8080
 ```
 
-After changing `.env`, restart the frontend.
-
-### MySQL Connection Failed
-
-Check:
-
-- MySQL is running
-- The database exists
-- The username and password are correct
-- The backend environment variables are correct
-
-You can test MySQL with:
-
-```bash
-mysql -u root -p
-```
-
-### Image Does Not Display
-
-Check whether the image path exists in the database:
-
-```sql
-SELECT id, name, image_url FROM meal;
-```
-
-Then open the image URL directly in the browser:
+Open the application at:
 
 ```text
-http://localhost:8080/uploads/meals/your-image-name.jpg
+http://localhost:5173
 ```
 
-If the URL cannot be opened, check whether the image file exists in the backend upload folder.
+> The current backend CORS configuration allows only `http://localhost:5173`. Use `localhost` rather than `127.0.0.1`. If the frontend port or production domain changes, update `CorsConfig.java` as well.
 
-### Admin Login Failed
+## 🧭 First-Run Walkthrough
 
-Check that you are using the same admin entry code, username, and password configured in your backend environment variables.
+1. Open `/admin` and enter the configured administrator entry code.
+2. Sign in with the configured administrator username and password.
+3. Open menu management, create a meal type, then create a meal and upload an image.
+4. Return to the customer home page, add meals to the cart, and submit an order.
+5. Save the order ID returned by the application.
+6. Open `/orders/query` and enter the order ID to view its details and current status.
+7. In the admin dashboard, move the order from `PENDING` to `PREPARING`, then complete or cancel it.
 
-Example:
+## 🗺️ Application Routes
 
-```bash
-echo $ADMIN_ENTRY_CODE
-echo $ADMIN_USERNAME
-echo $ADMIN_PASSWORD
+| Route | Page | Purpose |
+| --- | --- | --- |
+| `/` | `HomePage` | Menu browsing, category filtering, cart management, and order submission |
+| `/orders/query` | `OrderQueryPage` | Look up order status and details by order ID |
+| `/admin` | `AdminLoginPage` | Administrator entry-code check and account login |
+| `/admin/dashboard` | `AdminDashboardPage` | Order list, status filtering, and status updates |
+| `/admin/menu` | `AdminMenuPage` | Meal type, meal, and image management |
+
+## 🔄 Order Status Rules
+
+```mermaid
+flowchart LR
+    P["PENDING"] --> R["PREPARING"]
+    P --> X["CANCELLED"]
+    R --> C["COMPLETED"]
+    R --> X
 ```
 
-### Admin Status Update Failed
+| Current status | Allowed next status | Meaning |
+| --- | --- | --- |
+| `PENDING` | `PREPARING`, `CANCELLED` | A new order can begin preparation or be cancelled |
+| `PREPARING` | `COMPLETED`, `CANCELLED` | An order in preparation can be completed or cancelled |
+| `COMPLETED` | None | Final state; no further updates are accepted |
+| `CANCELLED` | None | Final state; no further updates are accepted |
 
-Make sure the admin token exists in browser `localStorage`.
+## 🔌 API Overview
 
-Admin API requests should include:
+### Public Endpoints
+
+| Method | Path | Purpose |
+| --- | --- | --- |
+| `GET` | `/api/meal-types` | Get all meal types |
+| `GET` | `/api/meal-types/{id}` | Get one meal type |
+| `GET` | `/api/meals` | Get all meals |
+| `GET` | `/api/meals/{id}` | Get one meal |
+| `GET` | `/api/meals/type/{mealTypeId}` | Get meals by type |
+| `POST` | `/api/orders` | Create an order |
+| `GET` | `/api/orders/{id}` | Get an order by ID |
+
+### Administrator Endpoints
+
+Every request except the entry-code check and login must include `Authorization: Bearer <token>`.
+
+| Method | Path | Purpose |
+| --- | --- | --- |
+| `POST` | `/api/admin/entry/check` | Validate the administrator entry code |
+| `POST` | `/api/admin/login` | Sign in and obtain a token |
+| `POST` | `/api/admin/logout` | Sign out and remove the token |
+| `GET` | `/api/admin/orders` | Get all orders |
+| `GET` | `/api/admin/orders/{id}` | Get one order |
+| `GET` | `/api/admin/orders/status/{status}` | Filter orders by status |
+| `PATCH` | `/api/admin/orders/{id}/status` | Update an order status |
+| `DELETE` | `/api/admin/orders/{id}` | Delete an order; the current admin UI has no button for this endpoint |
+| `GET / POST` | `/api/admin/meals` | List or create meals |
+| `GET / PUT / DELETE` | `/api/admin/meals/{id}` | Read, update, or delete one meal |
+| `GET` | `/api/admin/meals/type/{mealTypeId}` | Get meals by type |
+| `POST` | `/api/admin/meals/{id}/image` | Upload a meal image |
+| `GET / POST` | `/api/admin/meal-types` | List or create meal types |
+| `GET / PUT / DELETE` | `/api/admin/meal-types/{id}` | Read, update, or delete one meal type |
+
+## 📁 Project Structure
 
 ```text
-Authorization: Bearer <token>
+Food_Ordering_System/
+├── Backend/Backend/
+│   ├── src/main/java/com/yujie/backend/
+│   │   ├── config/          # CORS, interceptors, and static-resource configuration
+│   │   ├── controller/      # Public and administrator endpoints
+│   │   ├── dto/             # Request and response structures
+│   │   ├── entity/          # JPA entities
+│   │   ├── exception/       # Centralized exception handling
+│   │   ├── repository/      # Data-access layer
+│   │   ├── service/         # Business logic
+│   │   └── util/            # Administrator token utility
+│   ├── src/main/resources/  # Spring Boot configuration
+│   ├── uploads/meals/       # Locally uploaded meal images
+│   ├── pom.xml
+│   └── mvnw
+├── Frontend/food-ordering-frontend/
+│   ├── src/
+│   │   ├── api/             # Fetch API wrappers
+│   │   ├── pages/           # Customer and administrator pages
+│   │   ├── types/           # TypeScript types
+│   │   ├── App.tsx          # Application routes
+│   │   └── App.css          # Application styles
+│   ├── .env.example
+│   └── package.json
+├── docs/screenshots/        # README runtime screenshots
+└── README.md
 ```
 
-### Cannot Delete Meal Type
+## ✅ Build and Checks
 
-If a meal type still has meals under it, deleting it may fail because of database constraints.
+Frontend:
 
-This is expected behavior.
+```bash
+cd Frontend/food-ordering-frontend
+npm run lint
+npm run build
+```
 
-### Cannot Delete Meal
+Backend:
 
-If a meal has already appeared in an order, deleting it may fail because order history still references it.
+```bash
+cd Backend/Backend
+./mvnw test
+./mvnw clean package
+```
 
-This is expected behavior.
+> The backend currently contains one `contextLoads` smoke test and loads the real datasource. MySQL, the database, and the environment configuration must therefore be available before running the test. The frontend currently has no automated test script.
+
+## 🧯 Troubleshooting
+
+<details>
+<summary><strong>The frontend cannot reach the backend</strong></summary>
+
+- Confirm that the backend is running at `http://localhost:8080`.
+- Confirm that `VITE_API_BASE_URL` is correct in the frontend `.env` file.
+- Restart Vite after changing `.env`.
+- Remember that the current CORS configuration allows only `http://localhost:5173`.
+
+</details>
+
+<details>
+<summary><strong>The customer menu is empty</strong></summary>
+
+The project does not include seed data. Sign in to the admin area, create a meal type and one or more meals, then return to the customer home page.
+
+</details>
+
+<details>
+<summary><strong>MySQL connection fails</strong></summary>
+
+Check the MySQL service, database name, username, password, and `DB_URL`. Use `mysql -u root -p` to verify the local database connection first.
+
+</details>
+
+<details>
+<summary><strong>An uploaded image does not appear</strong></summary>
+
+- Start the backend from `Backend/Backend`.
+- Check that the file exists under `Backend/Backend/uploads/meals/`.
+- Check that `meal.image_url` contains a `/uploads/meals/...` path.
+- Confirm that the image does not exceed `5 MB`.
+
+</details>
+
+<details>
+<summary><strong>Admin requests become unauthorized after a backend restart</strong></summary>
+
+Administrator tokens are stored in backend memory. Restarting the backend invalidates existing tokens; sign out and sign in again.
+
+</details>
+
+<details>
+<summary><strong>A meal type or meal cannot be deleted</strong></summary>
+
+A meal type that is still referenced by meals, or a meal referenced by historical order items, may be protected by database foreign-key constraints. Review the related records before deleting them.
+
+</details>
+
+## 🔭 Possible Improvements
+
+- Responsive mobile layout
+- Meal search, pagination, and availability controls
+- Password hashing and persistent administrator sessions
+- Inventory, payment, and delivery workflows
+- Frontend and backend automated tests with CI
+- Docker Compose and production deployment configuration
 
 ---
 
-## 15. Future Improvements
+<div align="center">
 
-Possible future improvements:
+Made with ☕ by **Yujie Liang**
 
-- Add responsive design for mobile devices
-- Add search function for meals
-- Add pagination for admin orders
-- Add admin order detail modal
-- Add better image validation
-- Add customer authentication
-- Add payment simulation
-- Add deployment instructions
-- Add screenshots to this README
-
----
-
-## 16. Author
-
-Yujie Liang
+</div>
